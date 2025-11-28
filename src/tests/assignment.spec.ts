@@ -8,6 +8,15 @@ import { TransferPage } from '@fabric/pages/transfer.page';
 import { faker } from '@faker-js/faker';
 import { expect, test } from '@playwright/test';
 
+interface Transaction {
+  id: number;
+  accountId: number;
+  date: number;
+  description: string;
+  amount: number;
+  type: string;
+}
+
 const generateRandomUser = (): User => {
   const user: User = {} as User;
   user.firstName = faker.person.firstName();
@@ -26,9 +35,14 @@ const generateRandomUser = (): User => {
 
 test.describe('Fabric End-to-End Tests', async () => {
   let user: User = {} as User;
+  let payeeUser: User = {} as User;
+  let currentAccountNumber: string;
+  let newAccountNumber: string;
+  const transactionAmount = '50';
 
   test.beforeAll('Prepare user for test', async () => {
     user = generateRandomUser();
+    payeeUser = generateRandomUser();
   });
 
   test('UI scenario', async ({ page }) => {
@@ -39,9 +53,6 @@ test.describe('Fabric End-to-End Tests', async () => {
     const openAccountPage = new OpenAccountPage(page);
     const transferPage = new TransferPage(page);
     const billPayPage = new BillPayPage(page);
-    let currentAccountNumber: string;
-    let newAccountNumber: string;
-    const transactionAmount = '50';
 
     await test.step('Create new user', async () => {
       await test.step('Navigate to register page', async () => {
@@ -123,7 +134,6 @@ test.describe('Fabric End-to-End Tests', async () => {
       await transferPage.openSidebarMenu('Bill Pay');
       await expect(billPayPage.payeeName).toBeVisible();
 
-      const payeeUser = generateRandomUser();
       await billPayPage.payBill(payeeUser, newAccountNumber, transactionAmount);
 
       await expect(billPayPage.resultTitle).toHaveText('Bill Payment Complete');
@@ -133,8 +143,33 @@ test.describe('Fabric End-to-End Tests', async () => {
     });
   });
 
-  // test.skip('API scenario', async ({ request }) => {
-  //   test('Search transaction by amount', () => {});
-  //   test('Validate details displayed', () => {});
-  // });
+  test('API scenario', async ({ request }) => {
+    let transactions: Transaction[] = [];
+
+    await test.step('Search transaction by amount', async () => {
+      const response = await request.get(
+        `https://parabank.parasoft.com/parabank/services/bank/accounts/${newAccountNumber}/transactions/amount/${transactionAmount}`,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+        },
+      );
+      transactions = (await response.json()) as Transaction[];
+      await expect(response).toBeOK();
+      expect(transactions.length).toBe(2);
+    });
+    await test.step('Validate details displayed', () => {
+      const expectedDescriptions = [
+        'Funds Transfer Sent',
+        `Bill Payment to ${payeeUser.firstName} ${payeeUser.lastName}`,
+      ];
+      transactions.forEach((transaction, index) => {
+        expect(transaction.amount.toString()).toBe(transactionAmount);
+        expect(transaction.description).toBe(expectedDescriptions[index]);
+        expect(transaction.accountId.toString()).toBe(newAccountNumber);
+        expect(transaction.type).toBe('Debit');
+      });
+    });
+  });
 });
