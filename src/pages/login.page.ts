@@ -17,10 +17,6 @@ export class LoginPage {
     this.registerLink = page.getByText('Register');
   }
 
-  async isPageLoaded(): Promise<boolean> {
-    return await this.loginButton.isVisible();
-  }
-
   async login(username: string, password: string): Promise<void> {
     await this.userName.fill(username);
     await this.password.fill(password);

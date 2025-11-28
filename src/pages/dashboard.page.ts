@@ -30,8 +30,4 @@ export class DashboardPage {
   async getWelcomeMessage(): Promise<string> {
     return (await this.message.textContent()) ?? '';
   }
-
-  async isSidebarVisible(): Promise<boolean> {
-    return await this.sidebar.isVisible();
-  }
 }
