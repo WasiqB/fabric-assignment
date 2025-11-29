@@ -24,6 +24,8 @@ pipeline {
                 sh 'export NODE_PATH="/Users/wasiqbhamla/.nvm/versions/node/v22.21.1"'
                 sh 'export NODE_HOME="$NODE_PATH/lib/node_modules"'
 
+                sh 'npm install -g pnpm'
+
                 sh 'pnpm install'
                 sh 'pnpm exec playwright install --with-deps'
             }
