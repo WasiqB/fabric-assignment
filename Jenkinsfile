@@ -8,11 +8,7 @@ pipeline {
         cron('H 22 * * *')
     }
     environment {
-        PATH = "/usr/local/bin:$PATH" 
-        PATH = "$HOME/bin:/usr/bin:$PATH"
-
-        PATH = "/opt/homebrew/bin:$PATH"
-        PATH = "/opt/homebrew/opt/ruby/bin:$PATH"
+        PATH = "/usr/local/bin:$HOME/bin:/usr/bin:/opt/homebrew/bin:/opt/homebrew/opt/ruby/bin:$PATH"
 
         NODE_PATH = "/Users/wasiqbhamla/.nvm/versions/node/v22.21.1"
         NODE_HOME = "$NODE_PATH/lib/node_modules"
