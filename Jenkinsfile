@@ -11,18 +11,20 @@ pipeline {
             }
         }
         stage('Install Dependencies') {
-            steps {
-                sh 'export PATH="/usr/local/bin:${PATH}"'
-                sh 'export PATH=$HOME/bin:/usr/bin:$PATH'
+            nodejs('System_NodeJS') {
+                steps {
+                    sh 'export PATH="/usr/local/bin:${PATH}"'
+                    sh 'export PATH=$HOME/bin:/usr/bin:$PATH'
 
-                sh 'export PATH="/opt/homebrew/bin:${PATH}"'
-                sh 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"'
+                    sh 'export PATH="/opt/homebrew/bin:${PATH}"'
+                    sh 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"'
 
-                sh 'export NODE_PATH="/Users/wasiqbhamla/.nvm/versions/node/v22.21.1"'
-                sh 'export NODE_HOME="$NODE_PATH/lib/node_modules"'
+                    sh 'export NODE_PATH="/Users/wasiqbhamla/.nvm/versions/node/v22.21.1"'
+                    sh 'export NODE_HOME="$NODE_PATH/lib/node_modules"'
 
-                sh 'pnpm install'
-                sh 'pnpm exec playwright install --with-deps'
+                    sh 'pnpm install'
+                    sh 'pnpm exec playwright install --with-deps'
+                }
             }
         }
         stage('Run Playwright Tests') {
