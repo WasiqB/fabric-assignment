@@ -30,18 +30,6 @@ pipeline {
                 sh 'CI=true pnpm test:ui'
             }
         }
-        stage('Publish HTML Report') {
-            steps {
-                publishHTML(target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'playwright-report',
-                    reportFiles: 'index.html',
-                    reportName: 'Playwright Report'
-                ])
-            }
-        }
     }
     post {
         always {
