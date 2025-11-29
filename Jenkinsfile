@@ -1,7 +1,8 @@
 pipeline {
     agent any
-    tools {
-        nodejs 'Node22'
+    triggers {
+        githubPush() 
+        cron('H 22 * * *')
     }
     stages {
         stage('Checkout') {
