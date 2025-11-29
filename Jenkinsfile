@@ -7,6 +7,16 @@ pipeline {
         githubPush() 
         cron('H 22 * * *')
     }
+    environment {
+        PATH = "/usr/local/bin:$PATH" 
+        PATH = "$HOME/bin:/usr/bin:$PATH"
+
+        PATH = "/opt/homebrew/bin:$PATH"
+        PATH = "/opt/homebrew/opt/ruby/bin:$PATH"
+
+        NODE_PATH = "/Users/wasiqbhamla/.nvm/versions/node/v22.21.1"
+        NODE_HOME = "$NODE_PATH/lib/node_modules"
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -15,17 +25,6 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'export PATH="/usr/local/bin:${PATH}"'
-                sh 'export PATH=$HOME/bin:/usr/bin:$PATH'
-
-                sh 'export PATH="/opt/homebrew/bin:${PATH}"'
-                sh 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"'
-
-                sh 'export NODE_PATH="/Users/wasiqbhamla/.nvm/versions/node/v22.21.1"'
-                sh 'export NODE_HOME="$NODE_PATH/lib/node_modules"'
-
-                sh 'npm install -g pnpm'
-
                 sh 'pnpm install'
                 sh 'pnpm exec playwright install --with-deps'
             }
