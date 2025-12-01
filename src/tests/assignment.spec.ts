@@ -60,7 +60,7 @@ test.describe('Fabric End-to-End Tests', async () => {
         await expect(loginPage.userName).toBeVisible();
 
         await loginPage.navigateToRegisterPage();
-        expect(await registerPage.isPageLoaded()).toBeTruthy();
+        await expect(registerPage.registerButton).toBeVisible();
       });
 
       await test.step('Register new user', async () => {

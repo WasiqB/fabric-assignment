@@ -45,10 +45,6 @@ export class RegisterPage {
     this.registerButton = page.getByRole('button', { name: 'Register' });
   }
 
-  async isPageLoaded(): Promise<boolean> {
-    return await this.registerButton.isVisible();
-  }
-
   async register({
     firstName,
     lastName,
